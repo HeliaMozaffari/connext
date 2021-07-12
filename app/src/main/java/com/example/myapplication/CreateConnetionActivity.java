@@ -72,6 +72,9 @@ public class CreateConnetionActivity extends AppCompatActivity {
 
                     if(task.isSuccessful()){
                         Toast.makeText(CreateConnetionActivity.this, "Upload successful", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(CreateConnetionActivity.this, CreateConnectionActivity2.class);
+                        startActivity(intent);
+                        finish();
 
                     }else{
                         Toast.makeText(CreateConnetionActivity.this, task.getException().getMessage(),Toast.LENGTH_SHORT).show();
