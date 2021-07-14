@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -11,7 +13,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.StorageReference;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
@@ -22,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private int i;
     Button mLogout;
     Button mCreate;
+    FirebaseFirestore fireStore;
+    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
 
 
@@ -35,18 +46,11 @@ public class MainActivity extends AppCompatActivity {
         mCreate = findViewById(R.id.createConnection);
 
 
-
         al = new ArrayList<>();
-        al.add("php");
-        al.add("c");
-        al.add("python");
-        al.add("java");
-        al.add("html");
-        al.add("c++");
-        al.add("css");
-        al.add("javascript");
+        userDatabase();
 
-        arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al );
+        arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al);
+
 
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
 
@@ -75,11 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                // Ask for more data here
-                al.add("XML ".concat(String.valueOf(i)));
-                arrayAdapter.notifyDataSetChanged();
-                Log.d("LIST", "notified");
-                i++;
+
             }
 
             @Override
@@ -114,9 +114,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
+
+
+        public void userDatabase(){
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            DatabaseReference dbR = FirebaseDatabase.getInstance().getReference().child("User");
+            dbR.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull  DataSnapshot snapshot, @Nullable  String previousChildName) {
+                    if(snapshot.exists()){
+                        al.add(snapshot.getKey());
+                        arrayAdapter.notifyDataSetChanged();
+                    }
+
+                }
+
+                @Override
+                public void onChildChanged(@NonNull  DataSnapshot snapshot, @Nullable  String previousChildName) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull  DataSnapshot snapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull  DataSnapshot snapshot, @Nullable  String previousChildName) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+
+
+        }
 
 
 

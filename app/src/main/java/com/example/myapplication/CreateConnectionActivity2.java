@@ -15,6 +15,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,6 +32,8 @@ public class CreateConnectionActivity2 extends AppCompatActivity {
     String userID;
     FirebaseAuth fAuth;
     FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser() ;
+    FirebaseDatabase database;
+    private DatabaseReference mDatabase;
 
 
 
@@ -48,6 +52,10 @@ public class CreateConnectionActivity2 extends AppCompatActivity {
         mTwitter = findViewById(R.id.twitter);
         mTiktok = findViewById(R.id.tiktok);
         mConnect = findViewById(R.id.connect);
+
+        database = FirebaseDatabase.getInstance();
+        mDatabase = database.getReference("User");
+
 
 
 
@@ -90,7 +98,7 @@ public class CreateConnectionActivity2 extends AppCompatActivity {
                 }
 
 
-                fireStore.collection("Users").document(currentFirebaseUser.getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                mDatabase.child(currentFirebaseUser.getUid().toString()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
 
@@ -111,6 +119,8 @@ public class CreateConnectionActivity2 extends AppCompatActivity {
 
             }
         });
+
+
 
 
 
