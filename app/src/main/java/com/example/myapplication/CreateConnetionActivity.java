@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -14,90 +15,114 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.net.URL;
 import java.util.UUID;
 
 public class CreateConnetionActivity extends AppCompatActivity {
 
-    private Button mConnect;
+    private Button uploadBtn;
     private ImageView imageView;
-    FirebaseStorage storage;
+    private  StorageReference reference = FirebaseStorage.getInstance().getReference();
+    private Uri imageUri;
+    FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser() ;
+    private String imageUrl;
 
-    Uri imageUri;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_connetion);
-        mConnect = findViewById(R.id.upload);
-        imageView = findViewById(R.id.imageView2);
-        storage = FirebaseStorage.getInstance();
 
+        uploadBtn = findViewById(R.id.upload);
+        imageView = findViewById(R.id.imageView2);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGetContent.launch("image/*");
-                
-
-
+                Intent galleryIntent = new Intent();
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*");
+                startActivityForResult(galleryIntent,2);
             }
         });
 
-        mConnect.setOnClickListener(new View.OnClickListener() {
+        uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
-                uploadImage();
+                if(imageUri != null){
+                    uploadToFirebase(imageUri);
+
+                }else{Toast.makeText(CreateConnetionActivity.this,"please select image", Toast.LENGTH_SHORT).show();}
+
 
             }
         });
+
 
     }
 
-    private void uploadImage() {
+    private void uploadToFirebase(Uri imageUri) {
 
-        if(imageUri != null){
-            StorageReference reference = storage.getReference().child("images/" + UUID.randomUUID().toString());
-
-            reference.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull  Task<UploadTask.TaskSnapshot> task) {
-
-                    if(task.isSuccessful()){
-                        Toast.makeText(CreateConnetionActivity.this, "Upload successful", Toast.LENGTH_SHORT).show();
+        StorageReference fileRef = reference.child(currentFirebaseUser.getUid().toString());
+        fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Toast.makeText(CreateConnetionActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                        imageUrl = uri.toString();
                         Intent intent = new Intent(CreateConnetionActivity.this, CreateConnectionActivity2.class);
+                        intent.putExtra("url", imageUrl);
                         startActivity(intent);
                         finish();
 
-                    }else{
-                        Toast.makeText(CreateConnetionActivity.this, task.getException().getMessage(),Toast.LENGTH_SHORT).show();
+
+
+
+
                     }
+                });
 
-                }
-            });
-        }
-
-
-
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull  UploadTask.TaskSnapshot snapshot) {
+                Toast.makeText(CreateConnetionActivity.this, "Uploading...", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(CreateConnetionActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
-            new ActivityResultCallback<Uri>() {
-                @Override
-                public void onActivityResult(Uri result) {
-                    if(result != null){
-                        imageView.setImageURI(result);
-                        imageUri = result;
-                    }
-                }
-            });
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(data !=null){
+
+            imageUri = data.getData();
+            imageView.setImageURI(imageUri);
+
+        }
+    }
 
 }

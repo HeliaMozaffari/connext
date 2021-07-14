@@ -62,6 +62,7 @@ public class SigninActivity extends AppCompatActivity {
                             public void onSuccess(AuthResult authResult) {
                                 Toast.makeText(SigninActivity.this, "Login Successfully", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(SigninActivity.this, MainActivity.class));
+
                                 finish();
                             }
                         }).addOnFailureListener(new OnFailureListener() {

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,6 +29,9 @@ public class CreateConnectionActivity2 extends AppCompatActivity {
     FirebaseFirestore fireStore;
     String userID;
     FirebaseAuth fAuth;
+    FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser() ;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,7 @@ public class CreateConnectionActivity2 extends AppCompatActivity {
         mConnect = findViewById(R.id.connect);
 
 
+
         mConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,7 +66,15 @@ public class CreateConnectionActivity2 extends AppCompatActivity {
 
 
                 Map<String, Object> user = new HashMap<>();
-                user.put("Name", name);
+                if(currentFirebaseUser != null) {
+
+                    user.put("UserId",currentFirebaseUser.getUid().toString());
+
+                }else{
+                    startActivity(new Intent(CreateConnectionActivity2.this, SigninActivity.class));
+                }
+
+                user.put("name", name);
                 user.put("description", description);
                 user.put("youtube", youtube);
                 user.put("twitch", twitch);
@@ -69,10 +82,17 @@ public class CreateConnectionActivity2 extends AppCompatActivity {
                 user.put("facebook", facebook);
                 user.put("twitter", twitter);
                 user.put("tiktok", tiktok);
+                if(getIntent().getStringExtra("url") != null){
 
-                fireStore.collection("Users").add(user).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    user.put("picture", getIntent().getStringExtra("url"));
+                }else{
+                    startActivity(new Intent(CreateConnectionActivity2.this, SigninActivity.class));
+                }
+
+
+                fireStore.collection("Users").document(currentFirebaseUser.getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
+                    public void onSuccess(Void unused) {
 
                         Toast.makeText(CreateConnectionActivity2.this,"Connext Created", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -82,7 +102,7 @@ public class CreateConnectionActivity2 extends AppCompatActivity {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CreateConnectionActivity2.this,"Connext Created", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreateConnectionActivity2.this,"Connext Failed", Toast.LENGTH_SHORT).show();
                     }
                 });
 

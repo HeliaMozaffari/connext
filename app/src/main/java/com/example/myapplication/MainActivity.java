@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
@@ -107,13 +108,17 @@ public class MainActivity extends AppCompatActivity {
         mCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
+
                 startActivity(new Intent(getApplicationContext(), CreateConnetionActivity.class));
                 finish();
             }
         });
 
+
+
     }
+
+
 
 
 }
