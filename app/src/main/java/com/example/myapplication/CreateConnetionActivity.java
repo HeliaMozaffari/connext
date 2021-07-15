@@ -42,6 +42,7 @@ public class CreateConnetionActivity extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +51,8 @@ public class CreateConnetionActivity extends AppCompatActivity {
         uploadBtn = findViewById(R.id.upload);
         imageView = findViewById(R.id.imageView2);
 
+
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,6 +60,7 @@ public class CreateConnetionActivity extends AppCompatActivity {
                 galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                 galleryIntent.setType("image/*");
                 startActivityForResult(galleryIntent,2);
+
             }
         });
 
