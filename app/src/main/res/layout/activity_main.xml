@@ -11,13 +11,13 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create Connection"
+        android:text="Create Connext"
         android:id="@+id/createConnection"/>
     <Button
-        android:id="@+id/logout"
+        android:id="@+id/matches"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Logout" />
+        android:text="Matched Connext" />
 
 
     <com.lorentzos.flingswipe.SwipeFlingAdapterView
@@ -27,6 +27,13 @@
         android:background="#ffeee9e2"
         app:rotation_degrees="15.5"
         tools:context=".MyActivity" />
+
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Logout" />
+
 
 
 

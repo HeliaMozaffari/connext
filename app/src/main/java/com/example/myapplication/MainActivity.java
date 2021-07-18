@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private int i;
     Button mLogout;
     Button mCreate;
+    Button matches;
     FirebaseFirestore fireStore;
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         mLogout = findViewById(R.id.logout);
         mCreate = findViewById(R.id.createConnection);
+        matches = findViewById(R.id.matches);
 
 
         rowItems= new ArrayList<Cards>();
@@ -175,7 +177,21 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+            matches.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, MatchesActivity.class);
+                    startActivity(intent);
+                    return;
+
+                }
+            });
+
+
+
         }
+
+
 
 
 
