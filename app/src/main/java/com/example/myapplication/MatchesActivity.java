@@ -84,6 +84,24 @@ public class MatchesActivity extends AppCompatActivity {
                     users.setPicture(snapshot.child("picture").getValue().toString());
                     users.setName(snapshot.child("name").getValue().toString());
                     users.setDescription(snapshot.child("description").getValue().toString());
+                    if(snapshot.child("facebook") != null){
+                        users.setFacebook(snapshot.child("facebook").getValue().toString());
+                    }
+                    if(snapshot.child("instagram") != null){
+                        users.setInstagram(snapshot.child("instagram").getValue().toString());
+                    }
+                    if(snapshot.child("youtube") != null){
+                        users.setYoutube(snapshot.child("youtube").getValue().toString());
+                    }
+                    if(snapshot.child("twitter") != null){
+                        users.setTwitter(snapshot.child("twitter").getValue().toString());
+                    }
+                    if(snapshot.child("twitch") != null){
+                        users.setTwitch(snapshot.child("twitch").getValue().toString());
+                    }
+                    if(snapshot.child("tiktok") != null){
+                        users.setTiktok(snapshot.child("tiktok").getValue().toString());
+                    }
                     usersList.add(users);
                     recyclerAdapter = new RecyclerAdapter(getApplicationContext(),usersList);
                     recyclerView.setAdapter(recyclerAdapter);

@@ -1,11 +1,14 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,7 +51,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         return usersList.size();
     }
 
-    public class ViewHolder extends  RecyclerView.ViewHolder{
+    public class ViewHolder extends  RecyclerView.ViewHolder implements  View.OnClickListener{
 
        ImageView imageView;
        TextView textView, textView2;
@@ -58,6 +61,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             imageView = itemView.findViewById(R.id.smImageView);
             textView = itemView.findViewById(R.id.smTextView);
             textView2 = itemView.findViewById(R.id.smTextView2);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Context context = v.getContext();
+            int position  = getAdapterPosition();
+            Intent intent = new Intent(context, SocialsActivity.class);
+            intent.putExtra("detail", usersList.get(position));
+            ((Activity)context).startActivity(intent);
+
         }
     }
 }
