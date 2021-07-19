@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".SocialsActivity"></activity>
+        <activity android:name=".YTVideoDetails"></activity>
+        <activity android:name=".SocialsActivity" />
         <activity android:name=".MatchesActivity" />
         <activity android:name=".CreateConnectionActivity2" />
         <activity android:name=".CreateConnetionActivity" />
